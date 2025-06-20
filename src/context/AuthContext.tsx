@@ -72,9 +72,23 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Mock user data
+      // Check for admin credentials
+      if (email === 'abc@gmail.com' && password === '12345') {
+        const user: User = {
+          id: 'admin',
+          name: 'Admin User',
+          email,
+          avatar: `https://ui-avatars.com/api/?name=Admin&background=3b82f6&color=fff`
+        };
+        
+        localStorage.setItem('user', JSON.stringify(user));
+        dispatch({ type: 'LOGIN_SUCCESS', payload: user });
+        return;
+      }
+      
+      // Regular user login
       const user: User = {
-        id: '1',
+        id: Date.now().toString(),
         name: email.split('@')[0],
         email,
         avatar: `https://ui-avatars.com/api/?name=${email.split('@')[0]}&background=3b82f6&color=fff`
