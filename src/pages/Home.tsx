@@ -1,0 +1,197 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowRight, Star, Truck, Shield, Headphones, RefreshCw } from 'lucide-react';
+import ProductCard from '../components/ProductCard';
+import { products } from '../data/products';
+
+const Home: React.FC = () => {
+  const featuredProducts = products.filter(p => p.isFeatured);
+  const newProducts = products.filter(p => p.isNew);
+
+  const features = [
+    {
+      icon: Truck,
+      title: 'Free Shipping',
+      description: 'Free shipping on orders over $100'
+    },
+    {
+      icon: Shield,
+      title: 'Secure Payment',
+      description: '100% secure payment processing'
+    },
+    {
+      icon: Headphones,
+      title: '24/7 Support',
+      description: 'Dedicated customer support'
+    },
+    {
+      icon: RefreshCw,
+      title: 'Easy Returns',
+      description: '30-day return policy'
+    }
+  ];
+
+  return (
+    <div className="pt-32">
+      {/* Hero Section */}
+      <section className="relative bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 text-white overflow-hidden">
+        <div className="absolute inset-0 bg-black/30"></div>
+        <div 
+          className="absolute inset-0 opacity-20"
+          style={{
+            backgroundImage: `url('https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        ></div>
+        
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h1 className="text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                Authentic
+                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-orange-400">
+                  Bengali Heritage
+                </span>
+              </h1>
+              <p className="text-xl text-blue-100 mb-8 leading-relaxed">
+                Discover our curated collection of traditional Bengali products, from handwoven sarees to authentic sweets, bringing the essence of Bengal to your doorstep.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link
+                  to="/products"
+                  className="group bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2"
+                >
+                  <span>Shop Now</span>
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+                <Link
+                  to="/categories"
+                  className="border-2 border-white text-white hover:bg-white hover:text-blue-900 px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 transform hover:scale-105 text-center"
+                >
+                  Browse Categories
+                </Link>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-4">
+                <img
+                  src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400&h=300"
+                  alt="Traditional Saree"
+                  className="rounded-2xl shadow-2xl"
+                />
+                <img
+                  src="https://images.pexels.com/photos/2306782/pexels-photo-2306782.jpeg?auto=compress&cs=tinysrgb&w=400&h=200"
+                  alt="Brass Items"
+                  className="rounded-2xl shadow-2xl"
+                />
+              </div>
+              <div className="space-y-4 mt-8">
+                <img
+                  src="https://images.pexels.com/photos/1105666/pexels-photo-1105666.jpeg?auto=compress&cs=tinysrgb&w=400&h=200"
+                  alt="Music Collection"
+                  className="rounded-2xl shadow-2xl"
+                />
+                <img
+                  src="https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?auto=compress&cs=tinysrgb&w=400&h=300"
+                  alt="Bengali Sweets"
+                  className="rounded-2xl shadow-2xl"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {features.map((feature, index) => (
+              <div key={index} className="text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+                  <feature.icon className="w-8 h-8 text-blue-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">{feature.title}</h3>
+                <p className="text-gray-600">{feature.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Products */}
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-800 mb-4">
+              Featured <span className="text-blue-600">Products</span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Handpicked items that showcase the best of Bengali culture and craftsmanship
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {featuredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+          
+          <div className="text-center">
+            <Link
+              to="/products"
+              className="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-semibold transition-colors"
+            >
+              <span>View All Products</span>
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* New Arrivals */}
+      <section className="py-20 bg-gradient-to-br from-purple-50 to-pink-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-800 mb-4">
+              New <span className="text-purple-600">Arrivals</span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Fresh additions to our collection, bringing you the latest in Bengali heritage
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {newProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Newsletter */}
+      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl font-bold mb-4">Stay Connected</h2>
+          <p className="text-xl text-blue-100 mb-8">
+            Subscribe to our newsletter for exclusive offers and updates on new arrivals
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="flex-1 px-4 py-3 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-white"
+            />
+            <button className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 rounded-full font-semibold transition-colors">
+              Subscribe
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default Home;
