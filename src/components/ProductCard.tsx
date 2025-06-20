@@ -3,34 +3,55 @@ import { Link } from 'react-router-dom';
 import { ShoppingCart, Heart, Star, Eye } from 'lucide-react';
 import { Product } from '../types';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
+import toast from 'react-hot-toast';
 
 interface ProductCardProps {
   product: Product;
+  className?: string;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, className = '' }) => {
   const { dispatch } = useCart();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     dispatch({
       type: 'ADD_TO_CART',
       payload: { product, quantity: 1 }
     });
+    toast.success('Added to cart!');
   };
 
+  const handleWishlistToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (isInWishlist(product.id)) {
+      removeFromWishlist(product.id);
+      toast.success('Removed from wishlist');
+    } else {
+      addToWishlist(product);
+      toast.success('Added to wishlist');
+    }
+  };
+
+  const inWishlist = isInWishlist(product.id);
+
   return (
-    <div className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+    <div className={`group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 ${className}`}>
       {/* Product Image */}
-      <div className="relative overflow-hidden">
+      <div className="relative overflow-hidden aspect-square">
         <img
           src={product.image}
           alt={product.name}
-          className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         />
         
         {/* Badges */}
-        <div className="absolute top-4 left-4 flex flex-col space-y-2">
+        <div className="absolute top-3 left-3 flex flex-col space-y-2">
           {product.isNew && (
             <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
               NEW
@@ -49,9 +70,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </div>
 
         {/* Hover Actions */}
-        <div className="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <button className="p-2 bg-white rounded-full shadow-md hover:bg-gray-50 transition-colors">
-            <Heart className="w-4 h-4 text-gray-600" />
+        <div className="absolute top-3 right-3 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <button
+            onClick={handleWishlistToggle}
+            className={`p-2 rounded-full shadow-md transition-colors ${
+              inWishlist 
+                ? 'bg-red-500 text-white' 
+                : 'bg-white text-gray-600 hover:bg-red-50 hover:text-red-500'
+            }`}
+          >
+            <Heart className={`w-4 h-4 ${inWishlist ? 'fill-current' : ''}`} />
           </button>
           <Link
             to={`/product/${product.id}`}
@@ -62,19 +90,33 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </div>
 
         {/* Quick Add to Cart */}
-        <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <button
             onClick={handleAddToCart}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors flex items-center justify-center space-x-2"
+            disabled={!product.inStock}
+            className={`w-full py-2 px-4 rounded-lg font-semibold transition-colors flex items-center justify-center space-x-2 ${
+              product.inStock
+                ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            }`}
           >
             <ShoppingCart className="w-4 h-4" />
-            <span>Add to Cart</span>
+            <span className="text-sm">{product.inStock ? 'Add to Cart' : 'Out of Stock'}</span>
           </button>
         </div>
+
+        {/* Out of Stock Overlay */}
+        {!product.inStock && (
+          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+            <span className="bg-white text-gray-800 px-4 py-2 rounded-full font-semibold">
+              Out of Stock
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Product Info */}
-      <div className="p-6">
+      <div className="p-4">
         <div className="mb-2">
           <span className="text-sm text-blue-600 font-medium">{product.category}</span>
         </div>
@@ -91,14 +133,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 key={i}
                 className={`w-4 h-4 ${
                   i < Math.floor(product.rating)
-                    ? 'text-yellow-400 fill-current'
+                    ? 'text-green-500 fill-current'
                     : 'text-gray-300'
                 }`}
               />
             ))}
           </div>
           <span className="text-sm text-gray-600 ml-2">
-            {product.rating} ({product.reviews} reviews)
+            {product.rating} ({product.reviews})
           </span>
         </div>
 
@@ -114,10 +156,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               </span>
             )}
           </div>
-          
-          {!product.inStock && (
-            <span className="text-sm text-red-500 font-medium">Out of Stock</span>
-          )}
         </div>
       </div>
     </div>
