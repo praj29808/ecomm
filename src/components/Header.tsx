@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, ShoppingCart, Search, User, Heart, Sun, LogOut, Package, Settings } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -18,6 +18,7 @@ const Header: React.FC = () => {
   const { state: wishlistState } = useWishlist();
   const { state: authState, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -43,6 +44,16 @@ const Header: React.FC = () => {
   const handleLogout = () => {
     logout();
     setShowUserMenu(false);
+    navigate('/');
+  };
+
+  const handleDashboardClick = () => {
+    setShowUserMenu(false);
+    if (authState.user?.email === 'abc@gmail.com') {
+      navigate('/admin');
+    } else {
+      navigate('/customer');
+    }
   };
 
   return (
@@ -160,16 +171,15 @@ const Header: React.FC = () => {
                       <p className="text-sm font-medium text-gray-800">{authState.user?.name}</p>
                       <p className="text-xs text-gray-600">{authState.user?.email}</p>
                     </div>
-                    <Link
-                      to="/profile"
-                      className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      onClick={() => setShowUserMenu(false)}
+                    <button
+                      onClick={handleDashboardClick}
+                      className="flex items-center space-x-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
                       <Settings className="w-4 h-4" />
-                      <span>Profile</span>
-                    </Link>
+                      <span>Dashboard</span>
+                    </button>
                     <Link
-                      to="/orders"
+                      to="/customer/orders"
                       className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => setShowUserMenu(false)}
                     >

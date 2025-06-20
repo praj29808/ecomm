@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import Modal from '../ui/Modal';
@@ -22,6 +23,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
   });
 
   const { login, signup, state } = useAuth();
+  const navigate = useNavigate();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -48,10 +50,21 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'l
       if (mode === 'login') {
         await login(formData.email, formData.password);
         toast.success('Welcome back!');
+        
+        // Redirect based on user type
+        if (formData.email === 'abc@gmail.com') {
+          navigate('/admin');
+        } else {
+          navigate('/customer');
+        }
       } else {
         await signup(formData.name, formData.email, formData.password);
         toast.success('Account created successfully!');
+        
+        // Regular users go to customer panel
+        navigate('/customer');
       }
+      
       onClose();
       setFormData({ name: '', email: '', password: '', confirmPassword: '' });
     } catch (error) {

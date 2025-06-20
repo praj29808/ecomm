@@ -8,7 +8,8 @@ import {
   Package, 
   Truck, 
   CheckCircle,
-  Clock
+  Clock,
+  Settings
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
